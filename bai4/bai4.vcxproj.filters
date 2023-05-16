@@ -30,6 +30,9 @@
     <ClInclude Include="NVSanXuat.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="exception.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="NhanVien.cpp">

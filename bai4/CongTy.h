@@ -31,7 +31,8 @@ public:
 	void ghiNVcoLuongNhoHon();
 	void them(NhanVien* NVmoi, const char* filename);
 	void xoa(NhanVien* NVcu, const char* filename);
-
+	// kiem tra thuoc tinh ma nhan vien cua nhan vien t là duy nhat trong cong ty
+	bool checkMaNV(NhanVien *t);
 
 };
 #endif // !_CONGTY_H

@@ -60,30 +60,48 @@ CongTy& CongTy::operator=(const CongTy& congty)
 std::istream& CongTy::Nhap(std::istream& is)
 {
 	// TODO: insert return statement here
+	if (sl > 0) {
+		for (int i = 0; i < sl; i++) {
+			delete dsNV[i];
+		}
+		delete[]dsNV;
+		dsNV = nullptr;
+		sl = 0;
+	}
 	if (is.rdbuf() == std::cin.rdbuf()) {
 		std::cout << "Nhap thong tin cho nhan vien: " << std::endl;
-		int key;
+		int key = 0;
 		while (1) {
 			std::cout << "Nhap 1 de them nhan vien la nhan vien cong nhat" << std::endl;
 			std::cout << "Nhap 2 de them nhan vien la nhan vien san xuat" << std::endl;
 			std::cout << "nhap 0 de thoat them nhan vien" << std::endl;
 			std::cout << "Nhap loai nhan vien muon them: ";
-
-
 			std::cin >> key;
-			if (key == 1) {
-				NhanVien* t = new NVCongNhat;
-				t->Nhap(is);
-				them(t);
-			}
-			if (key == 2) {
-				NhanVien* t = new NVSanXuat;
-				t->Nhap(is);
-				them(t);
-			}
 			if (key == 0) {
 				break;
 			}
+			NhanVien* t = nullptr;
+			if (key == 1) {
+				t = new NVCongNhat;
+				t->Nhap(is);
+				
+			}
+			if (key == 2) {
+				t = new NVSanXuat;
+				t->Nhap(is);
+				
+			}
+			// kiem tra thuoc tinh ma nhan vien la duy nhat 
+			try {
+				if (!checkMaNV(t)) throw Exception ("Ma nhan vien trong cong ty phai la duy nhat");
+				them(t);
+			}
+			catch (Exception e) {
+				std::cout << e.getMessage() << endl;
+				std::cout << "Khong the them nhan vien nay vao danh sach nhan vien cua cong ty" << endl;
+
+			}
+			
 		}
 	}
 	return is;
@@ -93,6 +111,7 @@ std::ostream& CongTy::Xuat(std::ostream& os)
 {
 	// TODO: insert return statement here
 	if (os.rdbuf() == std::cout.rdbuf()) {
+		cout << "tong so nhan vien: " << sl << endl;
 		os << std::setw(15) << std::left << "MaNV";
 		os << std::setw(30) << std::left << "Ho Ten";
 		os << std::setw(10) << std::left << "Gioi tinh";
@@ -151,11 +170,13 @@ void CongTy::ghiFile(const char* filename)
 		std::cout << "Khong mo duoc file " << filename << std::endl;
 		return;
 	}
-	for (int i = 0; i < sl - 1; i++) {
-		dsNV[i]->Xuat(fout);
-		fout << std::endl;
+	if (sl > 0) {
+		for (int i = 0; i < sl - 1; i++) {
+			dsNV[i]->Xuat(fout);
+			fout << std::endl;
+		}
+		dsNV[sl - 1]->Xuat(fout);
 	}
-	dsNV[sl - 1]->Xuat(fout);
 	fout.close();
 }
 
@@ -310,4 +331,12 @@ void CongTy::xoa(NhanVien* NVcu, const char* filename)
 {
 	xoa(NVcu);
 	ghiFile(filename);
+}
+
+bool CongTy::checkMaNV(NhanVien* t)
+{
+	for (int i = 0; i < sl; i++) {
+		if (strcmp(t->getMaNV(), dsNV[i]->getMaNV()) == 0) return false;
+	}
+	return true;
 }

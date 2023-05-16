@@ -86,7 +86,9 @@ int main()
 			getline(maNV, std::cin);
 			NhanVien* kq = Mihoyo.timtheoMa(maNV);
 			std::cout << "Ket qua:  " << std::endl;
-			kq->Xuat(std::cout);
+			if (kq == nullptr) std::cout << "khong ton tai nhan vien nay trong cong ty" << endl;
+			else 
+				kq->Xuat(std::cout);
 			std::cout << std::endl;
 			break;
 		}

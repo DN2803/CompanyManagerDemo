@@ -5,6 +5,7 @@
 #include <chrono>
 #include <cstdlib>
 #include <assert.h>
+#include "exception.h"
 class Date
 {
 private:
@@ -15,9 +16,10 @@ public:
     Date(/* args */);
     Date(int dd, int mm, int yyyy);
     ~Date();
+    bool checkDate();
     friend std::istream& operator>> (std::istream& is, Date& src);
     friend std::ostream& operator<< (std::ostream& os, const Date& src);
-    bool checkdate();
+    bool checkBirthday();
     int days_in_month(int month);
     long days_since_epoch();
     int days_between(Date& other);
@@ -26,6 +28,7 @@ public:
     //gettor
     int getMonth();
     int getYear();
+   
 };
 
 #endif

@@ -20,13 +20,28 @@ Date::~Date()
 }
 std::istream& operator>> (std::istream& is, Date& src)
 {
-    char skip;
-    is >> src.day;
-    is >> skip;
-    is >> src.month;
-    is >> skip;
-    is >> src.year;
-    if (is.rdbuf() != std::cin.rdbuf()) is >> skip;
+    while (1) {
+        char skip;
+        is >> src.day;
+        is >> skip;
+        is >> src.month;
+        is >> skip;
+        is >> src.year;
+        if (is.rdbuf() == std::cin.rdbuf()) {
+            try {
+                if (!src.checkDate()) throw Exception("Ngay thang nam khong lop le, khong ton tai ngay nay, hay nhap lai \n");
+                break;
+            }
+            catch (Exception e) {
+                std::cout << e.getMessage();
+            }
+        }
+        if (is.rdbuf() != std::cin.rdbuf()) {
+            is >> skip;
+            break;
+        }
+    }
+    
     return is;
 }
 std::ostream& operator<< (std::ostream& os, const Date& src)
@@ -35,8 +50,10 @@ std::ostream& operator<< (std::ostream& os, const Date& src)
     os << t.c_str();
     return os;
 }
-bool Date::checkdate()
+bool Date::checkBirthday()
 {
+    // kiem tra la ngay hop le
+    if (!checkDate()) return false;
     //kiem tra ngay co phu hop khong 
     auto now = std::chrono::system_clock::now();
     std::time_t now_c = std::chrono::system_clock::to_time_t(now);
@@ -52,6 +69,7 @@ bool Date::checkdate()
     };
     return true;
 }
+
 int Date::days_in_month(int month)
 {
     if (month == 2) {
@@ -121,4 +139,22 @@ int Date::getMonth()
 int Date::getYear()
 {
     return year;
+}
+
+bool Date::checkDate()
+{
+    if (month > 12 || month < 1) return false;
+    if (month == 2) {
+        if (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)) {
+            return (day >0 && day <= 29);
+        }
+        return (day > 0 && day <= 28);
+    }
+    else if (month == 4 || month == 6 || month == 9 || month == 11) {
+        return (day > 0 && day <= 30);
+    }
+    else {
+        return (day > 0 && day <= 31);
+    }
+    return false;
 }

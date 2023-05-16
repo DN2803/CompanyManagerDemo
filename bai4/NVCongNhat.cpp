@@ -1,6 +1,7 @@
 #include "NVCongNhat.h"
 #include <iomanip>
 #include "handlingcstring.h"
+#include "exception.h"
 NVCongNhat::NVCongNhat() : NhanVien()
 {
 	soNC = 0;
@@ -41,10 +42,16 @@ std::istream& NVCongNhat::Nhap(std::istream& is)
 	NhanVien::Nhap(is);
 	if (is.rdbuf() == std::cin.rdbuf()) {
 		std::cout << "Nhap so ngay cong: ";
-		is >> soNC;
-		while (soNC > 26 || soNC < 22) {
-			std::cout << "so ngay cong khong phu hop, nhap lai so ngay cong: ";
-			is >> soNC;
+		while (1) {
+			try {
+				is >> soNC;
+				if (soNC > 26 || soNC < 22) throw Exception("Loi: so ngay cong khong hop le, so ngay cong trong khoang 22 toi 26\n");
+				break;
+			}
+			catch (Exception e) {
+				cout << e.getMessage();
+				cout << "hay nhap lai so ngay cong: ";
+			}
 		}
 	}
 	else {

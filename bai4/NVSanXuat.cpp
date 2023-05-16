@@ -1,6 +1,7 @@
 #include "NVSanXuat.h"
 #include "handlingcstring.h"
 #include <iomanip>
+#include "exception.h"
 NVSanXuat::NVSanXuat() : NhanVien()
 {
 	soSP = 0;
@@ -34,16 +35,22 @@ NVSanXuat& NVSanXuat::operator=(const NVSanXuat& nhanvien)
 	return *this;
 }
 
-std::istream& NVSanXuat::Nhap(std::istream& is)
+std::istream& NVSanXuat::Nhap(std::istream& is) 
 {
 	// TODO: insert return statement here
 	NhanVien::Nhap(is);
 	if (is.rdbuf() == std::cin.rdbuf()) {
 		std::cout << "Nhap so san pham: ";
-		is >> soSP;
-		while (soSP > 15 || soSP < 10) {
-			std::cout << "so san pham khong phu hop, nhap lai so san pham: ";
-			is >> soSP;
+		while (1) {
+			try {
+				is >> soSP;
+				if (soSP > 15 || soSP < 10)  throw Exception("Loi: so san pham khong phu hop, so san pham nam trong khoang 10 toi 15 \n");
+				break;
+			}
+			catch (Exception e) {
+				cout << e.getMessage();
+				cout << "hay nhap lai so san pham";
+			}
 		}
 	}
 	else {

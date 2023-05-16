@@ -3,6 +3,7 @@
 #include "handlingcstring.h"
 #include <iomanip>
 #include <ctime>
+#include "exception.h"
 NhanVien::NhanVien()
 {
 	maNV = NULL;
@@ -50,7 +51,6 @@ char* NhanVien::getHoTen()
 
 NhanVien& NhanVien::operator=(NhanVien nhanvien)
 {
-	// TODO: insert return statement here
 	strcpy(maNV, strlen(nhanvien.maNV), nhanvien.maNV);
 	strcpy(hoTen, strlen(nhanvien.hoTen), nhanvien.hoTen);
 	strcpy(gioiTinh, strlen(nhanvien.gioiTinh), nhanvien.gioiTinh);
@@ -61,36 +61,51 @@ NhanVien& NhanVien::operator=(NhanVien nhanvien)
 
 std::istream& NhanVien::Nhap(std::istream& is)
 {
-	// TODO: insert return statement here
 	if (is.rdbuf() == std::cin.rdbuf()) {
 		std::cout << "\nnhap ma nhan vien:  ";
-
 		is.ignore();
-		getline(maNV, is);
+		while (1) {
+			try {
+				getline(maNV, is);
+				if (!isfivenumber(maNV))  throw Exception("Loi: Ma ma nhan vien phai la 5 ki tu so\n");
+				break;
+			}
+			catch (Exception e) {
+				cout << e.getMessage() << endl;
+				cout << "hay nhap lai ma nhan vien: ";
+			}
+		}
+		
 		std::cout << "nhap ten nhan vien: ";
 		getline(hoTen, is);
 		std::cout << "nhap gioi tinh (nam hoac nu): ";
-		getline(gioiTinh, is);
-		while (strcmp(gioiTinh, "nam") != 0 && strcmp(gioiTinh, "nu") != 0) {
-			std::cout << "Gioi tinh khong hop le, ";
-			std::cout << "Nhap lai gioi tinh: ";
-			getline(hoTen, is);
-		}
-
-		std::cout << "nhap ngay sinh cua nhan vien theo dang dd/mm/yyyy: ";
-		is >> ngaySinh;
-		if (strcmp(gioiTinh, "nam")) {
-			while (Tuoi() > 60 || Tuoi() < 18) {
-				std::cout << "Tuoi khong hop le, ";
-				std::cout << "Nhap lai ngay sinh co nam sinh phu hop: ";
-				is >> ngaySinh;
+		while (1) {
+			try {
+				getline(gioiTinh, is);
+				if (strcmp(gioiTinh, "nam") != 0 && strcmp(gioiTinh, "nu") != 0)
+					throw Exception("Loi: Gioi tinh khong hop le\n");
+				break;
+			}
+			catch (Exception e) {
+				cout << e.getMessage() << endl;;
+				cout << "hay nhap lai gioi tinh";
 			}
 		}
-		else {
-			while (Tuoi() > 55 || Tuoi() < 18) {
-				std::cout << "Tuoi khong hop le, ";
-				std::cout << "Nhap lai ngay sinh co nam sinh phu hop: ";
+		std::cout << "nhap ngay sinh cua nhan vien theo dang dd/mm/yyyy: ";
+		while (1) {
+			try {
 				is >> ngaySinh;
+				if (strcmp(gioiTinh, "nam") == 0) {
+					if (Tuoi() > 60 || Tuoi() < 18) throw Exception("Loi: Tuoi khong hop le, tuoi phai tu khoang 18 toi 60 \n");
+				}
+				else {
+					if (Tuoi() > 55 || Tuoi() < 18) throw Exception("Loi: Tuoi khong hop le, tuoi phai tu kkhoang 18 toi 55 \n");
+				}
+				break;
+			}
+			catch (Exception e) {
+				cout << e.getMessage();
+				cout << "hay nhap lai ngay sinh: ";
 			}
 		}
 
